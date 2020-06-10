@@ -34,7 +34,7 @@ function streamify (uri, opt) {
     ffmpeg.on('error', error => stream.emit('error', error))
     output.on('error', error => {
       video.end()
-      stream.emit('error', error)
+      //stream.emit('error', error)
     })
   })
 
