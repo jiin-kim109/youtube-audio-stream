@@ -18,28 +18,30 @@ function streamify (uri, opt) {
     videoFormat: 'mp4',
     quality: 'lowest',
     audioFormat: 'mp3',
-    filter (format) {
+    filter: 'audioonly',
+    /*filter (format) {
       return format.container === opt.videoFormat && format.audioBitrate
-    }
+    }*/
   }
 
-  const video = ytdl(uri, opt)
   const { file, audioFormat } = opt
+  const passThrough = new PassThrough();
   const stream = file ? fs.createWriteStream(file) : new PassThrough()
-  const ffmpeg = new FFmpeg(video)
+  const video = ytdl(uri, opt).pipe(stream);
+  //const ffmpeg = new FFmpeg(video)
 
-  process.nextTick(() => {
+  /*process.nextTick(() => {
     const output = ffmpeg.format(audioFormat).pipe(stream)
-
+    
     ffmpeg.on('error', error => stream.emit('error', error))
     output.on('error', error => {
       video.end()
       stream.emit('error', error)
     })
-  })
+  })*/
 
   stream.video = video
-  stream.ffmpeg = ffmpeg
+  //stream.ffmpeg = ffmpeg
 
   return stream
 }
